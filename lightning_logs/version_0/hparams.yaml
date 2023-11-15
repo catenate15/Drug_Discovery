@@ -1,4 +1,0 @@
-dropout: 0.2
-input_size: 2048
-learning_rate: 0.001
-nclasses: 2

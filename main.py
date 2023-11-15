@@ -45,6 +45,14 @@ def main(filebase, target_column):
     # You might want to check imbalance based on the training set
     is_imbalanced = ChemData.check_dataset_imbalance(train_df, target_column)
 
+    # Calculate the positive weight for imbalanced datasets
+    num_positives = train_df[target_column].sum()
+    num_negatives = len(train_df) - num_positives
+    pos_weight = torch.tensor([num_negatives / num_positives]).to(device) if num_positives > 0 else torch.tensor([1.0]).to(device)
+
+    # Add 'pos_weight' to the config dictionary
+    config['pos_weight'] = pos_weight
+
     # DataModule Initialization
     data_module = FingerprintDataModule(
         filebase=filebase,
@@ -52,22 +60,10 @@ def main(filebase, target_column):
         batch_size=config['batch_size']
     )
 
-    # Calculate the positive weight for imbalanced datasets
-    num_positives = train_df[target_column].sum()
-    num_negatives = len(train_df) - num_positives
-    pos_weight = num_negatives / num_positives if num_positives > 0 else 1
-
-    # Setup TensorBoard logger
-    logger = TensorBoardLogger("tb_logs", name="my_model")
-
     # Model Initialization
-    model = FingerprintClassifier(
-        fingerprint_size=config['fingerprint_size'],
-        dropout_rate=config['dropout'],
-        learning_rate=config['learning_rate'],
-        use_weighted_loss=is_imbalanced,
-        pos_weight=torch.tensor([pos_weight]).to(device) if is_imbalanced else None
-    )
+    model = FingerprintClassifier(config=config)
+
+
 
 
     # Initialize Trainer with TensorBoard Logger

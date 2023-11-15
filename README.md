@@ -3,34 +3,54 @@
 ### Molecular Activity Prediction and Activation Mapping
 This repository contains a collection of scripts for training a neural network to predict the activity of molecular compounds and for performing activation mapping to understand the contributions of different substructures to the predicted activity.
 
-Overview
-The project is split into several modules, each with a specific role:
+## Prerequisites
 
-**CHEMData**: Module for loading and preprocessing chemical data.
+- Python 3.x
+- PyTorch
+- PyTorch Lightning
+- RDKit
+- TorchMetrics
+- sklearn
 
-**fingerprint_data_module**: PyTorch Lightning data module for handling data loading and batching.
+## Installation
 
-**fingerprint_classifier**: PyTorch Lightning module defining the neural network model for molecular activity prediction.
+Install the required libraries using pip:
 
-**main.py**: Main script that orchestrates the training process and saves the model weights.
+```sh
+pip install torch pytorch-lightning rdkit-pypi torchmetrics scikit-learn
+```
 
-**activation_map.py**: (Yet to be included) Script for computing activation maps to visualize the contributions of molecular substructures.
+## Repository Structure
 
-### Setup
-To use these scripts, you will need Python 3.8+ and the following packages:
+- `CHEMData.py`: Contains the `ChemData` class for loading, preprocessing, and splitting the dataset.
+- `MolecularDataset.py`: Defines a PyTorch `Dataset` for lazy loading and on-the-fly processing of chemical data.
+- `FingerprintDataModule.py`: A PyTorch Lightning `DataModule` for setting up the data loaders for the model.
+- `FingerprintClassifier.py`: A PyTorch Lightning `Module` defining the deep learning model architecture and training steps.
+- `main.py`: The main script that integrates all components, performs model training, and saves the trained model.
+- `activation_map.py`: (Yet to be included) Script for computing activation maps to visualize the contributions of molecular substructures.
+## Usage
 
-pandas
-torch
-pytorch_lightning
-rdkit
-torchmetrics
-You can install these packages using pip:
+### Step 1: Preprocess and Split the Dataset
 
+Before training the model, you need to split your dataset into training, validation, and test sets. Run the `CHEMData.py` script as follows:
 
-**pip install pandas torch pytorch_lightning rdkit-pypi torchmetrics**
-##### Usage
-To train the model and predict molecular activity:
+```sh
+python CHEMData.py
+```
 
-Ensure your molecular data is in a CSV format with columns for compound IDs, SMILES strings, and activity labels.
-Run the main.py script, specifying the base name of your dataset files:
+This will create three CSV files: `PA_Train.csv`, `PA_Valid.csv`, and `PA_Test.csv`.
+
+### Step 2: Train the Model
+
+Once the data is split, you can train the model using `main.py`. You will need to specify the base filename of your datasets and the name of the target column.
+
+```sh
+python main.py --filebase PA --target_column <target_column_name>
+```
+
+Replace `<target_column_name>` with the actual name of the target column in your dataset.
+
+### Step 3: Evaluate the Model
+
+After training, the model's performance can be evaluated using the validation and test datasets through the PyTorch Lightning Trainer methods.
 

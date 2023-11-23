@@ -1,56 +1,70 @@
-# Drug_Discovery
-## Antibiotic_drug_discovery
-### Molecular Activity Prediction and Activation Mapping
-This repository contains a collection of scripts for training a neural network to predict the activity of molecular compounds and for performing activation mapping to understand the contributions of different substructures to the predicted activity.
 
-## Prerequisites
+---
 
-- Python 3.x
-- PyTorch
-- PyTorch Lightning
-- RDKit
-- TorchMetrics
-- sklearn
+# Antibiotic Drug Discovery Project
+
+## Introduction
+This project is dedicated to advancing antibiotic drug discovery by leveraging machine learning techniques to analyze molecular compounds. It aims to address the growing challenge of antimicrobial resistance by identifying promising antibiotic candidates through a computational approach.
 
 ## Installation
 
-Install the required libraries using pip:
+Before running the project, ensure you have Python 3 and the necessary libraries installed.
 
-```sh
-pip install torch pytorch-lightning rdkit-pypi torchmetrics scikit-learn
-```
+1. **Clone the repository:**
+   ```
+   git clone [repository-url]
+   ```
+2. **Install dependencies:**
+   ```
+   pip install -r requirements.txt
+   ```
 
-## Repository Structure
+## Modules Overview
 
-- `CHEMData.py`: Contains the `ChemData` class for loading, preprocessing, and splitting the dataset.
-- `MolecularDataset.py`: Defines a PyTorch `Dataset` for lazy loading and on-the-fly processing of chemical data.
-- `FingerprintDataModule.py`: A PyTorch Lightning `DataModule` for setting up the data loaders for the model.
-- `FingerprintClassifier.py`: A PyTorch Lightning `Module` defining the deep learning model architecture and training steps.
-- `main.py`: The main script that integrates all components, performs model training, and saves the trained model.
-- `activation_map.py`: (Yet to be included) Script for computing activation maps to visualize the contributions of molecular substructures.
+### `CHEMData.py`
+
+This module is responsible for processing chemical data. Key functionalities include loading data from CSV files, converting SMILES strings to Morgan fingerprints, preprocessing datasets, and splitting data into training, validation, and test sets.
+
+### `fingerprint_data_module.py`
+
+Integrates with PyTorch Lightning to manage datasets for training, validation, and testing. It loads data using `MolecularDataset` from `CHEMData.py`, preparing it for use in machine learning models.
+
+### `fingerprint_classifier.py`
+
+Defines a PyTorch Lightning module for a fingerprint-based classifier. It includes the neural network architecture, training, validation, and testing steps, as well as performance metrics.
+
+### `train.py`
+
+The main script for training the model. It initializes and configures the model, data module, and training process. It also includes functionality for logging and monitoring system resource usage.
+
+### `activation_map.py`
+
+Generates activation maps from the trained model to visualize which parts of the molecular fingerprints most influence the model's predictions. This module runs separately from the main training script and outputs activation maps as CSV files.
+
 ## Usage
 
-### Step 1: Preprocess and Split the Dataset
+To train the model and generate predictions:
 
-Before training the model, you need to split your dataset into training, validation, and test sets. Run the `CHEMData.py` script as follows:
+1. **Prepare your dataset** in CSV format with the required columns (e.g., SMILES strings, compound IDs, target labels).
 
-```sh
-python CHEMData.py
-```
+2. **Run the training script:**
+   ```
+   python train.py [path-to-your-dataset.csv]
+   ```
+   This will train the model and save the trained weights.
 
-This will create three CSV files: `PA_Train.csv`, `PA_Valid.csv`, and `PA_Test.csv`.
+3. **Generate activation maps:**
+   ```
+   python activation_map.py [path-to-your-dataset.csv]
+   ```
+   This will produce a CSV file containing activation maps for your dataset.
 
-### Step 2: Train the Model
+## Documentation
 
-Once the data is split, you can train the model using `main.py`. You will need to specify the base filename of your datasets and the name of the target column.
+Each module contains inline comments explaining the purpose of functions and classes. For detailed understanding, refer to these comments within each script.
 
-```sh
-python main.py --filebase PA --target_column <target_column_name>
-```
+---
 
-Replace `<target_column_name>` with the actual name of the target column in your dataset.
 
-### Step 3: Evaluate the Model
 
-After training, the model's performance can be evaluated using the validation and test datasets through the PyTorch Lightning Trainer methods.
 
